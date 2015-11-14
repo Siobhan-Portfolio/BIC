@@ -36,21 +36,31 @@ app.controller('myCtrl', function($scope) {
  *   + Error
 ****************************************/
 
+var stepFunction = function(i){
+  if(i>=0){
+    return 1;
+  }
+  else{
+    return -1;
+  }
+}
 
 
-var perceptron = function(nodeID, activationFunction){
+var perceptron = function(input){
 
-this.nodeID = nodeID;
-this.activationFunction = activationFunction;
+this.i = input;
+var weights = Math.random();
+var sum = input * weights;
+this.output = stepFunction(sum);
 
 }
 
-$scope.buttonPress = function(){
+var one = 1;
 
-var test = new perceptron("hello", "world");
 
-console.log("ID: " + test.nodeID)
-console.log("Func: " + test.activationFunction);
+$scope.print = function(){
+	$scope.pTest = new perceptron(-0.5);
+	console.log($scope.pTest.output);
 }
 
 

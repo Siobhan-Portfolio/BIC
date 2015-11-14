@@ -9,47 +9,56 @@
 var app = angular.module('myApp', []);
 
 app.controller('myCtrl', function ($scope) {
-                                         $scope.firstName = "John";
-                                         $scope.lastName = "Doe";
+  $scope.firstName = "John";
+  $scope.lastName = "Doe";
 
-                                         /******************************************************************************************
-                                                                                  Perceptron
-                                         *******************************************************************************************/
+  /******************************************************************************************
+                                           Perceptron
+  *******************************************************************************************/
 
-                                         /****************************************
-                                          * Input Variables:
-                                          *   + Inputs Vector             phi(x)
-                                          *     - Weights                 w
-                                          *     - Input Values            x
-                                          *     - SourceID                NodeID
-                                          *
-                                          *   + Bias                      b
-                                          *
-                                          * Node Variables:
-                                          *  + Summing Function           SUM()
-                                          *  + Activation Function        f(sum)
-                                          *  + NodeID                     NodeID
-                                          *
-                                          * Output Variables:
-                                          *   + Output Vector
-                                          *     - Destination Node
-                                          *     - Output Values
-                                          *   + Error
-                                         ****************************************/
+  /****************************************
+   * Input Variables:
+   *   + Inputs Vector             phi(x)
+   *     - Weights                 w
+   *     - Input Values            x
+   *     - SourceID                NodeID
+   *
+   *   + Bias                      b
+   *
+   * Node Variables:
+   *  + Summing Function           SUM()
+   *  + Activation Function        f(sum)
+   *  + NodeID                     NodeID
+   *
+   * Output Variables:
+   *   + Output Vector
+   *     - Destination Node
+   *     - Output Values
+   *   + Error
+  ****************************************/
 
-                                         var perceptron = function perceptron(nodeID, activationFunction) {
+  var stepFunction = function stepFunction(i) {
+    if (i >= 0) {
+      return 1;
+    } else {
+      return -1;
+    }
+  };
 
-                                                                                  this.nodeID = nodeID;
-                                                                                  this.activationFunction = activationFunction;
-                                         };
+  var perceptron = function perceptron(input) {
 
-                                         $scope.buttonPress = function () {
+    this.i = input;
+    var weights = Math.random();
+    var sum = input * weights;
+    this.output = stepFunction(sum);
+  };
 
-                                                                                  var test = new perceptron("hello", "world");
+  var one = 1;
 
-                                                                                  console.log("ID: " + test.nodeID);
-                                                                                  console.log("Func: " + test.activationFunction);
-                                         };
+  $scope.print = function () {
+    $scope.pTest = new perceptron(-0.5);
+    console.log($scope.pTest.output);
+  };
 });
 
 },{}]},{},[1])

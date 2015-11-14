@@ -1,17 +1,25 @@
 {
-  "name": "angular-phonecat",
-  "description": "A starter project for AngularJS",
-  "version": "0.0.0",
-  "homepage": "https://github.com/angular/angular-phonecat",
+  "name": "gulp-template",
+  "description": "Project template for gulp.js",
+  "main": "gulpfile.js",
+  "authors": [
+    "Riku Rouvila <riku.rouvila@leonidasoy.fi>"
+  ],
   "license": "MIT",
-  "private": true,
+  "keywords": [
+    "gulp",
+    "template"
+  ],
+  "homepage": "https://github.com/Siobhan-Portfolio/BIC",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
   "dependencies": {
-    "angular": "1.4.x",
-    "angular-mocks": "1.4.x",
-    "jquery": "~2.1.1",
-    "bootstrap": "~3.1.1",
-    "angular-route": "1.4.x",
-    "angular-resource": "1.4.x",
-    "angular-animate": "1.4.x"
+    "angular": "~1.4.7"
   }
 }

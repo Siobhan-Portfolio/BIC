@@ -4,9 +4,7 @@ html(ng-app='myApp')
     title BIC CW2
     // inject:css
     // endinject
-  body
-    h1 Hello world!
-    p(id="demo")
-    button(ng-controller='myCtrl', ng-click="buttonPress()") Click Me!!
+  body(ng-controller='myCtrl')
+    button(ng-click="print()") Click Me!!
     // inject:js
     // endinject
