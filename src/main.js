@@ -45,21 +45,31 @@ var stepFunction = function(i){
   }
 }
 
+$scope.values = [];
+$scope.weights = [];
+$scope.sum = 0;
+var perceptron = function(input, weights){
 
-var perceptron = function(input){
+var x = [];
+x = input;
+var w = [];
+w = weights;
 
-this.i = input;
-var weights = Math.random();
-var sum = input * weights;
+var sum = 0;
+
+for (var i = x.length - 1; i >= 0; i--) {
+	sum = sum + (w[i]*x[i]);
+};
+
 this.output = stepFunction(sum);
 
 }
 
-var one = 1;
+var data = [-1,-0.5,0.5,1];
 
 
 $scope.print = function(){
-	$scope.pTest = new perceptron(-0.5);
+	$scope.pTest = new perceptron(data);
 	console.log($scope.pTest.output);
 }
 

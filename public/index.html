@@ -7,6 +7,13 @@
   </head>
   <body ng-controller="myCtrl">
     <button ng-click="print()">Click Me!!</button>
+    <p>Values:
+      <li ng-repeat="i in values">{{i}}</li>
+    </p>
+    <p>Weights:
+      <li ng-repeat="j in weights">{{j}}</li>
+    </p>
+    <p>SUM: {{sum}}</p>
     <script src="/js/bundle.js"></script>
   </body>
 </html>

@@ -6,5 +6,10 @@ html(ng-app='myApp')
     // endinject
   body(ng-controller='myCtrl')
     button(ng-click="print()") Click Me!!
+    p Values:
+      li(ng-repeat='i in values') {{i}}
+    p Weights:
+      li(ng-repeat='j in weights') {{j}}
+    p SUM: {{sum}}
     // inject:js
     // endinject

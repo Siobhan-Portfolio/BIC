@@ -45,18 +45,29 @@ app.controller('myCtrl', function ($scope) {
     }
   };
 
-  var perceptron = function perceptron(input) {
+  $scope.values = [];
+  $scope.weights = [];
+  $scope.sum = 0;
+  var perceptron = function perceptron(input, weights) {
 
-    this.i = input;
-    var weights = Math.random();
-    var sum = input * weights;
+    var x = [];
+    x = input;
+    var w = [];
+    w = weights;
+
+    var sum = 0;
+
+    for (var i = x.length - 1; i >= 0; i--) {
+      sum = sum + w[i] * x[i];
+    };
+
     this.output = stepFunction(sum);
   };
 
-  var one = 1;
+  var data = [-1, -0.5, 0.5, 1];
 
   $scope.print = function () {
-    $scope.pTest = new perceptron(-0.5);
+    $scope.pTest = new perceptron(data);
     console.log($scope.pTest.output);
   };
 });
