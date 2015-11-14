@@ -1,0 +1,15 @@
+{
+  "version": 3,
+  "sources": [
+    "node_modules/browserify/node_modules/browser-pack/_prelude.js",
+    "/home/siobhan/git/personal/BIC/gulp-project-template/src/main.js"
+  ],
+  "names": [],
+  "mappings": "AAAA;;;;;;;;ACKA,IAAI,GAAG,GAAG,OAAO,CAAC,MAAM,CAAC,OAAO,EAAE,EAAE,CAAC,CAAC;;AAEtC,GAAG,CAAC,UAAU,CAAC,QAAQ,EAAE,UAAS,MAAM,EAAE;AACtC,+CAAM,CAAC,SAAS,GAAE,MAAM,CAAC;AACzB,+CAAM,CAAC,QAAQ,GAAE,KAAK,CAAC;;;;;;;;;;;;;;;;;;;;;;;;;;;AA+B3B,6CAAI,UAAU,GAAG,SAAb,UAAU,CAAY,MAAM,EAAE,kBAAkB,EAAC;;AAErD,sFAAI,CAAC,MAAM,GAAG,MAAM,CAAC;AACrB,sFAAI,CAAC,kBAAkB,GAAG,kBAAkB,CAAC;0CAE5C,CAAA;;AAED,+CAAM,CAAC,WAAW,GAAG,YAAU;;AAE/B,sFAAI,IAAI,GAAG,IAAI,UAAU,CAAC,OAAO,EAAE,OAAO,CAAC,CAAC;;AAE5C,yFAAO,CAAC,GAAG,CAAC,MAAM,GAAG,IAAI,CAAC,MAAM,CAAC,CAAA;AACjC,yFAAO,CAAC,GAAG,CAAC,QAAQ,GAAG,IAAI,CAAC,kBAAkB,CAAC,CAAC;0CAC/C,CAAA;CAGA,CAAC,CAAC",
+  "file": "generated.js",
+  "sourceRoot": "",
+  "sourcesContent": [
+    "(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require==\"function\"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error(\"Cannot find module '\"+o+\"'\");throw f.code=\"MODULE_NOT_FOUND\",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require==\"function\"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})",
+    "\n/******************************************************************************************\n                                         Angular Overhead\n*******************************************************************************************/\n\nvar app = angular.module('myApp', []);\n\napp.controller('myCtrl', function($scope) {\n    $scope.firstName= \"John\";\n    $scope.lastName= \"Doe\";\n\n\n/******************************************************************************************\n                                         Perceptron\n*******************************************************************************************/\n\n\n/****************************************\n * Input Variables:\n *   + Inputs Vector             phi(x)\n *     - Weights                 w\n *     - Input Values            x\n *     - SourceID                NodeID\n *\n *   + Bias                      b\n *\n * Node Variables:\n *  + Summing Function           SUM()\n *  + Activation Function        f(sum)\n *  + NodeID                     NodeID\n *\n * Output Variables:\n *   + Output Vector\n *     - Destination Node\n *     - Output Values\n *   + Error\n****************************************/\n\n\n\nvar perceptron = function(nodeID, activationFunction){\n\nthis.nodeID = nodeID;\nthis.activationFunction = activationFunction;\n\n}\n\n$scope.buttonPress = function(){\n\nvar test = new perceptron(\"hello\", \"world\");\n\nconsole.log(\"ID: \" + test.nodeID)\nconsole.log(\"Func: \" + test.activationFunction);\n}\n\n\n});"
+  ]
+}
