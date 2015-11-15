@@ -6,14 +6,72 @@
     <link rel="stylesheet" href="/css/style.css">
   </head>
   <body ng-controller="myCtrl">
-    <button ng-click="print()">Click Me!!</button>
-    <p>Values:
-      <li ng-repeat="i in values">{{i}}</li>
-    </p>
-    <p>Weights:
-      <li ng-repeat="j in weights">{{j}}</li>
-    </p>
-    <p>SUM: {{sum}}</p>
+    <div class="buttons">
+      <button ng-click="runTheMLP()">RUN!!</button><br/><br/>
+      <button ng-click="test()">Test</button><br/><br/>
+      <button ng-click="gaussian(-0.372)">-1</button><br/><br/>
+      <button ng-click="gaussian(0.5)">0</button><br/><br/>
+      <button ng-click="gaussian(1)">1</button>
+    </div><br/>
+    <h>INPUT NODES</h><br/>
+    <div class="node1">
+      <table>
+        <tr>
+          <th>Node 1 Values:</th>
+          <th>Node 1 Weights:</th>
+        </tr>
+        <tr>
+          <td>{{input_1.x}}</td>
+          <td>{{input_1.w}}</td>
+        </tr>
+        <tr>
+          <th>Node 1 SUM:</th>
+          <th>Node 1 OUTPUT:</th>
+        </tr>
+        <tr>
+          <td>{{input_1.sum}}</td>
+          <td>{{input_1.output}}</td>
+        </tr>
+      </table>
+      <h>Hidden nodes</h><br/>
+      <table ng-repeat="i in hiddenNodes">
+        <tr>
+          <th>Node {{$index}} Values:</th>
+          <th>Node {{$index}} Weights:</th>
+        </tr>
+        <tr>
+          <td>{{i.x}}</td>
+          <td>{{i.w}}</td>
+        </tr>
+        <tr>
+          <th>Node {{$index}} SUM:</th>
+          <th>Node {{$index}} OUTPUT:</th>
+        </tr>
+        <tr>
+          <td>{{i.sum}}</td>
+          <td>{{i.output}}</td>
+        </tr>
+      </table>
+      <h>Output Layer</h>
+      <table>
+        <tr>
+          <th>Node Values:</th>
+          <th>Node 1 Weights:</th>
+        </tr>
+        <tr>
+          <td>{{outerLayer.x}}</td>
+          <td>{{outerLayer.w}}</td>
+        </tr>
+        <tr>
+          <th>Node SUM:</th>
+          <th>Node OUTPUT:</th>
+        </tr>
+        <tr>
+          <td>{{outerLayer.sum}}</td>
+          <td>{{outerLayer.output}}</td>
+        </tr>
+      </table>
+    </div>
     <script src="/js/bundle.js"></script>
   </body>
 </html>
