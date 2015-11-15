@@ -7,64 +7,8 @@ html(ng-app='myApp')
   body(ng-controller='myCtrl')
     .buttons
       button(ng-click="runTheMLP()") RUN!!
-      br
-      br
-      button(ng-click="test()") Test
-      br
-      br
-      button(ng-click="gaussian(-0.372)") -1
-      br
-      br
-      button(ng-click="gaussian(0.5)") 0
-      br
-      br
-      button(ng-click="gaussian(1)") 1
     br
-    h INPUT NODES
-    br
-    .node1
-      table
-        tr
-          th Node 1 Values:
-          th Node 1 Weights:
-        tr
-          td {{input_1.x}}
-          td {{input_1.w}}
-        tr
-          th Node 1 SUM:
-          th Node 1 OUTPUT:
-        tr
-          td {{input_1.sum}}
-          td {{input_1.output}}
-      h Hidden nodes
-      br
-      table(ng-repeat='i in hiddenNodes')
-        tr
-          th Node {{$index}} Values:
-          th Node {{$index}} Weights:
-        tr
-          td {{i.x}}
-          td {{i.w}}
-        tr
-          th Node {{$index}} SUM:
-          th Node {{$index}} OUTPUT:
-        tr
-          td {{i.sum}}
-          td {{i.output}}
-      h Output Layer
-      table
-        tr
-          th Node Values:
-          th Node 1 Weights:
-        tr
-          td {{outerLayer.x}}
-          td {{outerLayer.w}}
-        tr
-          th Node SUM:
-          th Node OUTPUT:
-        tr
-          td {{outerLayer.sum}}
-          td {{outerLayer.output}}
+    {{mlp}}
 
 
 

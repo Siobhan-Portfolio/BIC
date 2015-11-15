@@ -160,8 +160,8 @@ app.controller('myCtrl', function ($scope) {
              Topology Functions
   ****************************************/
 
-  var singleInputLayer = function singleInputLayer(input, weights) {
-    var input_1 = new perceptron(input, weights[0][0], 2);
+  var singleInputLayer = function singleInputLayer(input, weights, aFunc) {
+    var input_1 = new perceptron(input, weights[0][0], aFunc[0]);
 
     console.log("Input Layer (Single)");
     console.log("Input: " + input_1.x);
@@ -173,13 +173,13 @@ app.controller('myCtrl', function ($scope) {
     return input_1;
   };
 
-  var hiddenLayer = function hiddenLayer(inputNode, weights) {
+  var hiddenLayer = function hiddenLayer(inputNode, weights, aFunc) {
 
-    var hidden_1 = new perceptron([inputNode.output], weights[1], 4);
-    var hidden_2 = new perceptron([inputNode.output], weights[2], 4);
-    var hidden_3 = new perceptron([inputNode.output], weights[3], 4);
-    var hidden_4 = new perceptron([inputNode.output], weights[4], 4);
-    var hidden_5 = new perceptron([inputNode.output], weights[5], 4);
+    var hidden_1 = new perceptron([inputNode.output], weights[1], aFunc[2]);
+    var hidden_2 = new perceptron([inputNode.output], weights[2], aFunc[3]);
+    var hidden_3 = new perceptron([inputNode.output], weights[3], aFunc[4]);
+    var hidden_4 = new perceptron([inputNode.output], weights[4], aFunc[5]);
+    var hidden_5 = new perceptron([inputNode.output], weights[5], aFunc[6]);
 
     console.log("Hidden Layer outputs");
     console.log("1: " + hidden_1.output);
@@ -200,8 +200,8 @@ app.controller('myCtrl', function ($scope) {
     return hiddenNodes;
   };
 
-  var outputLayer = function outputLayer(hiddenNodes, weights) {
-    var outerLayer = new perceptron([hiddenNodes[0].output, hiddenNodes[1].output, hiddenNodes[2].output, hiddenNodes[3].output, hiddenNodes[4].output], weights[6], 2);
+  var outputLayer = function outputLayer(hiddenNodes, weights, aFunc) {
+    var outerLayer = new perceptron([hiddenNodes[0].output, hiddenNodes[1].output, hiddenNodes[2].output, hiddenNodes[3].output, hiddenNodes[4].output], weights[6], aFunc[7]);
 
     console.log("OutputLayer");
     console.log("Sum: " + outerLayer.sum);
@@ -212,22 +212,51 @@ app.controller('myCtrl', function ($scope) {
   };
 
   /***************************************
+    This function creates a new MLP with
+    random weights
+  ****************************************/
+  var createNewRandMLP = function createNewRandMLP() {
+    var weights = [[[Math.random()], [Math.random()]], [Math.random()], [Math.random()], [Math.random()], [Math.random()], [Math.random()], [Math.random(), Math.random(), Math.random(), Math.random(), Math.random()]];
+
+    var aFunc = [2, 2, 2, 2, 2, 2, 2, 2];
+
+    var iLayer = singleInputLayer([Math.random()], weights, aFunc);
+    var hLayer = hiddenLayer(iLayer, weights, aFunc);
+    var oLayer = outputLayer(hLayer, weights, aFunc);
+
+    var error = iLayer.x[0] - oLayer.output;
+
+    var allLayers = {
+      'weights': weights,
+      'aFunc': aFunc,
+      'inputLayer': iLayer,
+      'hiddenLayer': hLayer,
+      'outputLayer': oLayer,
+      'error': error
+    };
+    return allLayers;
+  };
+
+  var initializePopulation = function initializePopulation(n) {
+
+    var size = n;
+
+    var population = [];
+    for (var i = 0; i < size; i++) {
+      var temp = createNewRandMLP();
+      population.push(temp);
+    }
+
+    return population;
+  };
+
+  /***************************************
         Test function to run as is
   ****************************************/
 
   $scope.runTheMLP = function () {
 
-    var globalWeights = [[[Math.random()], [Math.random()]], [Math.random()], [Math.random()], [Math.random()], [Math.random()], [Math.random()], [Math.random(), Math.random(), Math.random(), Math.random(), Math.random()]];
-
-    console.log(globalWeights);
-
-    var iLayer = singleInputLayer([Math.random()], globalWeights);
-    var hLayer = hiddenLayer(iLayer, globalWeights);
-    var oLayer = outputLayer(hLayer, globalWeights);
-    //var temp = $scope.input_1.x - $scope.outerLayer.output;
-    //console.log("Linear Error: " + temp);
-
-    //inputWeightChange();
+    $scope.mlp = initializePopulation(100000);
   };
 });
 
