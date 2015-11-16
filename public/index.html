@@ -6,11 +6,15 @@
     <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <link rel="stylesheet" href="/css/style.css">
     
-    <body ng-controller="myCtrl"></body><br/>
+    <body ng-controller="myCtrl"></body>
+    <button ng-click="initializePopulationdbl(3)">test</button><br/><br/>
+    <p>{{dblI}}</p><br/><br/><br/><br/>
     <button ng-click="selectFunction(0)">linear</button>
     <button ng-click="selectFunction(1)">cubic</button>
     <button ng-click="selectFunction(2)">sine</button>
-    <button ng-click="selectFunction(3)">tanh</button><br/><br/>
+    <button ng-click="selectFunction(3)">tanh</button>
+    <button ng-click="selectFunction(4)">xor</button>
+    <button ng-click="selectFunction(5)">complex</button><br/><br/>
     <h>Crossover rate = {{crossOverRate}} %</h><br/>
     <input type="number" ng-model="crossOverRate"/><br/><br/>
     <h>Mutation rate = {{mutationRate}} %</h><br/>
@@ -21,7 +25,7 @@
     <input type="number" ng-model="maxIterations"/><br/><br/>
     <button ng-click="runWithBoth(initialPopilationSize,(maxIterations-1))">Evolve Both Weight and Activation Functions</button><br/><br/>
     <button ng-click="runWithAFunc(initialPopilationSize,(maxIterations-1))">Evolve with Activation Function only</button><br/><br/>
-    <button ng-click="test(initialPopilationSize,(maxIterations-1))">Evolve with Weights only</button><br/><br/>
+    <button ng-click="runWithWeights(initialPopilationSize,(maxIterations-1))">Evolve with Weights only</button><br/><br/>
     <h>The Best MLP</h>
     <p>MSE: {{disp.error}}</p><br/>
     <p>Inputs Weight: {{disp.inputLayer.w[0]}} ..... Activation: {{disp.inputLayer.activFunc[0]}}</p>

@@ -9,7 +9,13 @@ html(ng-app='myApp')
 
 
     body(ng-controller='myCtrl')
-
+    button(ng-click="initializePopulationdbl(3)") test
+    br
+    br
+    p {{dblI}}
+    br
+    br
+    br
     br
     button(ng-click="selectFunction(0)") linear
 
@@ -18,6 +24,10 @@ html(ng-app='myApp')
     button(ng-click="selectFunction(2)") sine
 
     button(ng-click="selectFunction(3)") tanh
+
+    button(ng-click="selectFunction(4)") xor
+
+    button(ng-click="selectFunction(5)") complex
     br
     br
     h Crossover rate = {{crossOverRate}} %
@@ -46,7 +56,7 @@ html(ng-app='myApp')
     button(ng-click="runWithAFunc(initialPopilationSize,(maxIterations-1))") Evolve with Activation Function only
     br
     br
-    button(ng-click="test(initialPopilationSize,(maxIterations-1))") Evolve with Weights only
+    button(ng-click="runWithWeights(initialPopilationSize,(maxIterations-1))") Evolve with Weights only
     br
     br
     h The Best MLP
