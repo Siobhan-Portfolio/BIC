@@ -35,24 +35,30 @@ app.controller('myCtrl', function ($scope) {
    *   + Error
   ****************************************/
 
+  /**************************************
+  
+      This is all test data please ignore.
+  
+  ***************************************/
   var linear_data = [[-1, -1], [-0.98, -0.98], [-0.96, -0.96], [-0.94, -0.94], [-0.92, -0.92], [-0.9, -0.9], [-0.88, -0.88], [-0.86, -0.86], [-0.84, -0.84], [-0.82, -0.82], [-0.8, -0.8], [-0.78, -0.78], [-0.76, -0.76], [-0.74, -0.74], [-0.72, -0.72], [-0.7, -0.7], [-0.68, -0.68], [-0.66, -0.66], [-0.64, -0.64], [-0.62, -0.62], [-0.6, -0.6], [-0.58, -0.58], [-0.56, -0.56], [-0.54, -0.54], [-0.52, -0.52], [-0.5, -0.5], [-0.48, -0.48], [-0.46, -0.46], [-0.44, -0.44], [-0.42, -0.42], [-0.4, -0.4], [-0.38, -0.38], [-0.36, -0.36], [-0.34, -0.34], [-0.32, -0.32], [-0.3, -0.3], [-0.28, -0.28], [-0.26, -0.26], [-0.24, -0.24], [-0.22, -0.22], [-0.2, -0.2], [-0.18, -0.18], [-0.16, -0.16], [-0.14, -0.14], [-0.12, -0.12], [-0.1, -0.1], [-0.08, -0.08], [-0.06, -0.06], [-0.04, -0.04], [-0.02, -0.02], [0, 0], [0.02, 0.02], [0.04, 0.04], [0.06, 0.06], [0.08, 0.08], [0.1, 0.1], [0.12, 0.12], [0.14, 0.14], [0.16, 0.16], [0.18, 0.18], [0.2, 0.2], [0.22, 0.22], [0.24, 0.24], [0.26, 0.26], [0.28, 0.28], [0.3, 0.3], [0.32, 0.32], [0.34, 0.34], [0.36, 0.36], [0.38, 0.38], [0.4, 0.4], [0.42, 0.42], [0.44, 0.44], [0.46, 0.46], [0.48, 0.48], [0.5, 0.5], [0.52, 0.52], [0.54, 0.54], [0.56, 0.56], [0.58, 0.58], [0.6, 0.6], [0.62, 0.62], [0.64, 0.64], [0.66, 0.66], [0.68, 0.68], [0.7, 0.7], [0.72, 0.72], [0.74, 0.74], [0.76, 0.76], [0.78, 0.78], [0.8, 0.8], [0.82, 0.82], [0.84, 0.84], [0.86, 0.86], [0.88, 0.88], [0.9, 0.9], [0.92, 0.92], [0.94, 0.94], [0.96, 0.96], [0.98, 0.98]];
 
   /************************
     Global Variables
   *************************/
 
+  //Threasholds for the fitness function
   var superHealthyThreshold = 5;
   var fitThreshold = 25; //This is a percentage of death. So 25 woul be 25% a fit solution will die.
   var averageThreshold = 80;
   var unFitThreshold = 95; //Same as above.
 
-  var mutationRate = 5000; //this is in 1/1'000'000 of a % so that we can chose very small mutation rates
+  //The rate of mutations
+  //NB: this is in 1/1'000'000 of a % so that we can chose very small mutation rates
+  var mutationRate = 5000;
 
+  //This is where I store the average error per population.
+  //I do this only so that I can display the data if we wish to view it.
   var averageErrors = [];
-
-  var test_Data = [[-1, -1], [-0.98, -0.98], [-0.96, -0.96], [-0.94, -0.94], [-0.92, -0.92], [-0.9, -0.9], [0.86, 0.86], [0.88, 0.88], [0.9, 0.9], [0.92, 0.92], [0.94, 0.94], [0.96, 0.96], [0.98, 0.98]];
-
-  var testCount = 1;
 
   /************************************************************
                       Activation Functions
@@ -124,6 +130,11 @@ app.controller('myCtrl', function ($scope) {
 
   /***************************************
               Perceptron Itself
+  
+      This is the code I used to build a
+      perceptron function as a base to
+      build the rest of the MLP.
+      It is designed to be reusable.
   ****************************************/
 
   var perceptron = function perceptron(input, weights, activFunc) {
@@ -136,7 +147,7 @@ app.controller('myCtrl', function ($scope) {
     this.w = weights;
     this.activFunc = activFunc;
 
-    //bias set to 0 for now.
+    //TODO: bias set to 0 for now.
     var bias = 0;
 
     this.sum = input[0];
@@ -173,46 +184,26 @@ app.controller('myCtrl', function ($scope) {
 
   /***************************************
              Topology Functions
+  
+      Since I didn't need to evolve the
+      topology of the MLP these functions
+      weren't designed to be flexible.
   ****************************************/
 
   var singleInputLayer = function singleInputLayer(input, w, aFunc) {
 
-    //console.log("Input Weight " + w);
-
     var input_1 = new perceptron(input, w, aFunc[0]);
-
-    /*console.log("Input Layer (Single)");
-    console.log("Input: "+ input_1.x);
-    console.log("Weight: "+ input_1.w);
-    console.log("Sum: "+ input_1.sum);
-    console.log("Output: "+ input_1.output);
-    console.log("------");*/
 
     return input_1;
   };
 
   var hiddenLayer = function hiddenLayer(inputNode, w, aFunc) {
 
-    //console.log("Hidden Weight " + w);
     var hidden_1 = new perceptron([inputNode.output], w.splice(0, 1), aFunc[2]);
     var hidden_2 = new perceptron([inputNode.output], w.splice(0, 1), aFunc[3]);
     var hidden_3 = new perceptron([inputNode.output], w.splice(0, 1), aFunc[4]);
     var hidden_4 = new perceptron([inputNode.output], w.splice(0, 1), aFunc[5]);
     var hidden_5 = new perceptron([inputNode.output], w.splice(0, 1), aFunc[6]);
-
-    /*console.log("Hidden Layer outputs");
-    console.log("1: " + hidden_1.output);
-    console.log("2: " + hidden_2.output);
-    console.log("3: " + hidden_3.output);
-    console.log("4: " + hidden_4.output);
-    console.log("5: " + hidden_5.output);
-    console.log("Hidden Layer sum");
-    console.log("1: " + hidden_1.sum);
-    console.log("2: " + hidden_2.sum);
-    console.log("3: " + hidden_3.sum);
-    console.log("4: " + hidden_4.sum);
-    console.log("5: " + hidden_5.sum);
-    console.log("------");*/
 
     var hiddenNodes = [hidden_1, hidden_2, hidden_3, hidden_4, hidden_5];
 
@@ -220,21 +211,16 @@ app.controller('myCtrl', function ($scope) {
   };
 
   var outputLayer = function outputLayer(hiddenNodes, w, aFunc) {
-    //console.log("Output Weights" + w);
-    var outerLayer = new perceptron([hiddenNodes[0].output, hiddenNodes[1].output, hiddenNodes[2].output, hiddenNodes[3].output, hiddenNodes[4].output], w, aFunc[7]);
 
-    /*console.log("OutputLayer");
-    console.log("Sum: " + outerLayer.sum);
-    console.log("Output: " + outerLayer.output);
-    console.log("------");*/
+    var outerLayer = new perceptron([hiddenNodes[0].output, hiddenNodes[1].output, hiddenNodes[2].output, hiddenNodes[3].output, hiddenNodes[4].output], w, aFunc[7]);
 
     return outerLayer;
   };
 
-  /***************************************
-    This function creates a new MLP with
-    random weights
-  ****************************************/
+  /*******************************************
+    This function creates a random activation
+    funtion and randomises it's settings.
+  ********************************************/
 
   var createRandomAFunc = function createRandomAFunc() {
 
@@ -263,6 +249,12 @@ app.controller('myCtrl', function ($scope) {
     return aFunc;
   };
 
+  /****************************************
+    This function creates a new MLP with
+    random weights. This is used to create
+    the initial population
+  *****************************************/
+
   var createNewRandMLP = function createNewRandMLP(input) {
     var weights = [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()];
 
@@ -283,7 +275,8 @@ app.controller('myCtrl', function ($scope) {
     var oLayer = outputLayer(hLayer, outputWeights, aFunc);
 
     //error checking of the network.
-
+    //This isn't yet the MSE this happens later.
+    //I just needed to keep track of (di-ui)^2
     var error = Math.pow(input - oLayer.output, 2);
 
     //create a JS object to add to the global population
@@ -297,6 +290,13 @@ app.controller('myCtrl', function ($scope) {
     };
     return allLayers;
   };
+
+  /****************************************
+    This function creates a new MLP with
+    pre-set weights. This is used to create
+    children from parent nodes, where only
+    the weights are evolved.
+  *****************************************/
 
   var createNewMLP = function createNewMLP(input, weights) {
 
@@ -317,8 +317,9 @@ app.controller('myCtrl', function ($scope) {
     var oLayer = outputLayer(hLayer, outputWeights, aFunc);
 
     //error checking of the network.
-    var correctOutput = iLayer.x[0];
-    var error = correctOutput - oLayer.output;
+    //This isn't yet the MSE this happens later.
+    //I just needed to keep track of (di-ui)^2
+    var error = Math.pow(input - oLayer.output, 2);
 
     //create a JS object to add to the global population
     var allLayers = {
@@ -353,7 +354,9 @@ app.controller('myCtrl', function ($scope) {
   /***************************************
     This function returns the error
     information on the population passed
-    Like average, min, max error.
+    It'll return an object containing
+    the total, average,min, max error
+    and an array of all the errors.
   ****************************************/
 
   var errorChecking = function errorChecking(population) {

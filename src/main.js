@@ -37,6 +37,12 @@ app.controller('myCtrl', function($scope) {
  *   + Error
 ****************************************/
 
+
+/**************************************
+
+    This is all test data please ignore.
+
+***************************************/
 var linear_data = [[-1, -1 ],
 [-0.98,   -0.98],
 [-0.96,   -0.96],
@@ -143,32 +149,21 @@ var linear_data = [[-1, -1 ],
   Global Variables
 *************************/
 
+//Threasholds for the fitness function
 var superHealthyThreshold = 5;
 var fitThreshold = 25; //This is a percentage of death. So 25 woul be 25% a fit solution will die.
 var averageThreshold = 80;
 var unFitThreshold = 95;//Same as above.
 
-var mutationRate = 5000; //this is in 1/1'000'000 of a % so that we can chose very small mutation rates
 
+//The rate of mutations 
+//NB: this is in 1/1'000'000 of a % so that we can chose very small mutation rates
+var mutationRate = 5000; 
+
+
+//This is where I store the average error per population.
+//I do this only so that I can display the data if we wish to view it.
 var averageErrors = [];
-
-var test_Data = [[-1,-1],
-            [-0.98, -0.98],
-            [-0.96, -0.96],
-            [-0.94, -0.94],
-            [-0.92, -0.92],
-            [-0.9,  -0.9],
-            [0.86,  0.86],
-            [0.88,  0.88],
-            [0.9, 0.9],
-            [0.92,  0.92],
-            [0.94,  0.94],
-            [0.96,  0.96],
-            [0.98,  0.98]
-           ];
-
-var testCount = 1;
-
 
 
 /************************************************************
@@ -248,11 +243,16 @@ return temp;
 }
 
 
+
+
 /***************************************
             Perceptron Itself
+
+    This is the code I used to build a
+    perceptron function as a base to
+    build the rest of the MLP.
+    It is designed to be reusable.
 ****************************************/
-
-
 
 var perceptron = function(input, weights, activFunc){
 
@@ -264,7 +264,7 @@ var perceptron = function(input, weights, activFunc){
   this.w = weights;
   this.activFunc = activFunc;
 
-//bias set to 0 for now.
+  //TODO: bias set to 0 for now.
   var bias = 0;
 
   this.sum = input[0];
@@ -304,47 +304,27 @@ var perceptron = function(input, weights, activFunc){
 
 /***************************************
            Topology Functions
+
+    Since I didn't need to evolve the
+    topology of the MLP these functions
+    weren't designed to be flexible.
 ****************************************/
 
 
 var singleInputLayer = function(input,w, aFunc){
 
-  //console.log("Input Weight " + w);
-
   var input_1 = new perceptron(input, w, aFunc[0]);
-
-  /*console.log("Input Layer (Single)");
-  console.log("Input: "+ input_1.x);
-  console.log("Weight: "+ input_1.w);
-  console.log("Sum: "+ input_1.sum);
-  console.log("Output: "+ input_1.output);
-  console.log("------");*/
 
   return input_1;
 }
 
 var hiddenLayer = function(inputNode, w, aFunc){
 
-  //console.log("Hidden Weight " + w);
   var hidden_1 = new perceptron([inputNode.output], w.splice(0,1), aFunc[2]);
   var hidden_2 = new perceptron([inputNode.output], w.splice(0,1), aFunc[3]);
   var hidden_3 = new perceptron([inputNode.output], w.splice(0,1), aFunc[4]);
   var hidden_4 = new perceptron([inputNode.output], w.splice(0,1), aFunc[5]);
   var hidden_5 = new perceptron([inputNode.output], w.splice(0,1), aFunc[6]);
-
-  /*console.log("Hidden Layer outputs");
-  console.log("1: " + hidden_1.output);
-  console.log("2: " + hidden_2.output);
-  console.log("3: " + hidden_3.output);
-  console.log("4: " + hidden_4.output);
-  console.log("5: " + hidden_5.output);
-  console.log("Hidden Layer sum");
-  console.log("1: " + hidden_1.sum);
-  console.log("2: " + hidden_2.sum);
-  console.log("3: " + hidden_3.sum);
-  console.log("4: " + hidden_4.sum);
-  console.log("5: " + hidden_5.sum);
-  console.log("------");*/
 
   var hiddenNodes = [hidden_1, hidden_2, hidden_3, hidden_4 ,hidden_5];
 
@@ -353,7 +333,7 @@ var hiddenLayer = function(inputNode, w, aFunc){
 }
 
 var outputLayer = function(hiddenNodes,w,aFunc){
-  //console.log("Output Weights" + w);
+
   var outerLayer = new perceptron(
         [hiddenNodes[0].output,
          hiddenNodes[1].output,
@@ -362,18 +342,15 @@ var outputLayer = function(hiddenNodes,w,aFunc){
          hiddenNodes[4].output
         ], w, aFunc[7]);
 
-    /*console.log("OutputLayer");
-    console.log("Sum: " + outerLayer.sum);
-    console.log("Output: " + outerLayer.output);
-    console.log("------");*/
-
     return outerLayer;
 }
 
-/***************************************
-  This function creates a new MLP with
-  random weights
-****************************************/
+
+
+/*******************************************
+  This function creates a random activation
+  funtion and randomises it's settings.
+********************************************/
 
 var createRandomAFunc= function(){
 
@@ -405,6 +382,12 @@ var createRandomAFunc= function(){
 
 }
 
+
+/****************************************
+  This function creates a new MLP with
+  random weights. This is used to create
+  the initial population
+*****************************************/
 
 var createNewRandMLP = function(input){
   var weights = [Math.random(),
@@ -449,7 +432,8 @@ var createNewRandMLP = function(input){
 
 
     //error checking of the network.
-
+    //This isn't yet the MSE this happens later.
+    //I just needed to keep track of (di-ui)^2
     var error = Math.pow((input - oLayer.output),2);
 
     //create a JS object to add to the global population
@@ -463,6 +447,13 @@ var createNewRandMLP = function(input){
                     };
     return allLayers;
 }
+
+/****************************************
+  This function creates a new MLP with
+  pre-set weights. This is used to create
+  children from parent nodes, where only
+  the weights are evolved.
+*****************************************/
 
 var createNewMLP = function(input, weights){
 
@@ -492,10 +483,10 @@ var createNewMLP = function(input, weights){
     var hLayer = hiddenLayer(iLayer, hiddenWeights, aFunc);
     var oLayer = outputLayer(hLayer, outputWeights, aFunc);
 
-
     //error checking of the network.
-    var correctOutput = iLayer.x[0];
-    var error = correctOutput - oLayer.output;
+    //This isn't yet the MSE this happens later.
+    //I just needed to keep track of (di-ui)^2
+    var error = Math.pow((input - oLayer.output),2);
 
     //create a JS object to add to the global population
     var allLayers = {
@@ -532,7 +523,9 @@ var initializePopulation = function(n){
 /***************************************
   This function returns the error
   information on the population passed
-  Like average, min, max error.
+  It'll return an object containing
+  the total, average,min, max error
+  and an array of all the errors.
 ****************************************/
 
 var errorChecking = function(population){
