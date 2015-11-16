@@ -43,8 +43,15 @@ app.controller('myCtrl', function ($scope) {
     Global Variables
   *************************/
 
+  var superHealthyThreshold = 5;
   var fitThreshold = 25; //This is a percentage of death. So 25 woul be 25% a fit solution will die.
-  var unFitThreshold = 75; //Same as above.
+  var averageThreshold = 80;
+  var unFitThreshold = 95; //Same as above.
+
+  var mutationRate = 5000; //this is in 1/1'000'000 of a % so that we can chose very small mutation rates
+
+  var averageErrors = [];
+
   var x_data = [1];
 
   /************************************************************
@@ -123,6 +130,7 @@ app.controller('myCtrl', function ($scope) {
     //Reads and sets the weights and the input values, w() and x() in our perceptron
     this.x = [];
     this.x = input;
+
     this.w = [];
     this.w = weights;
     this.activFunc = activFunc;
@@ -133,12 +141,14 @@ app.controller('myCtrl', function ($scope) {
     this.sum = 0;
     var tempSum = 0;
 
-    for (var i = this.x.length - 1; i >= 0; i--) {
+    for (var i = 0; i < this.x.length; i++) {
       tempSum = tempSum + this.w[i] * this.x[i];
+      console.log("Temp: " + tempSum);
     };
 
     tempSum = tempSum + bias;
     this.sum = tempSum;
+    console.log("SUM: " + this.sum);
 
     switch (activFunc[0]) {
       case 0:
@@ -249,7 +259,7 @@ app.controller('myCtrl', function ($scope) {
     return aFunc;
   };
 
-  var createNewRandMLP = function createNewRandMLP() {
+  var createNewRandMLP = function createNewRandMLP(input) {
     var weights = [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()];
 
     var aFunc = [createRandomAFunc(), createRandomAFunc(), createRandomAFunc(), createRandomAFunc(), createRandomAFunc(), createRandomAFunc(), createRandomAFunc(), createRandomAFunc()];
@@ -264,13 +274,13 @@ app.controller('myCtrl', function ($scope) {
     var outputWeights = temp.splice(0, 5);
 
     //create the three layers.
-    var iLayer = singleInputLayer([Math.random()], inputWeights, aFunc);
+    var iLayer = singleInputLayer(input, inputWeights, aFunc);
     var hLayer = hiddenLayer(iLayer, hiddenWeights, aFunc);
     var oLayer = outputLayer(hLayer, outputWeights, aFunc);
 
     //error checking of the network.
-    var correctOutput = iLayer.x[0] * iLayer.x[0] * iLayer.x[0];
-    var error = correctOutput - oLayer.output;
+
+    var error = Math.pow(input - oLayer.output, 2);
 
     //create a JS object to add to the global population
     var allLayers = {
@@ -284,7 +294,7 @@ app.controller('myCtrl', function ($scope) {
     return allLayers;
   };
 
-  var createNewMLP = function createNewMLP(weights) {
+  var createNewMLP = function createNewMLP(input, weights) {
 
     var aFunc = [createRandomAFunc(), createRandomAFunc(), createRandomAFunc(), createRandomAFunc(), createRandomAFunc(), createRandomAFunc(), createRandomAFunc(), createRandomAFunc()];
 
@@ -298,12 +308,12 @@ app.controller('myCtrl', function ($scope) {
     var outputWeights = temp.splice(0, 5);
 
     //create the three layers.
-    var iLayer = singleInputLayer([Math.random()], inputWeights, aFunc);
+    var iLayer = singleInputLayer(input, inputWeights, aFunc);
     var hLayer = hiddenLayer(iLayer, hiddenWeights, aFunc);
     var oLayer = outputLayer(hLayer, outputWeights, aFunc);
 
     //error checking of the network.
-    var correctOutput = iLayer.x[0] * iLayer.x[0] * iLayer.x[0];
+    var correctOutput = iLayer.x[0];
     var error = correctOutput - oLayer.output;
 
     //create a JS object to add to the global population
@@ -329,7 +339,7 @@ app.controller('myCtrl', function ($scope) {
 
     var population = [];
     for (var i = 0; i < size; i++) {
-      var temp = createNewRandMLP();
+      var temp = createNewRandMLP([Math.random()]);
       population.push(temp);
     }
 
@@ -372,7 +382,8 @@ app.controller('myCtrl', function ($scope) {
       'avError': avError,
       'allErrors': allErrors
     };
-    console.log(avError);
+    console.log("Average Error: " + avError);
+    averageErrors.push(avError);
     return errorStats;
   };
 
@@ -380,56 +391,133 @@ app.controller('myCtrl', function ($scope) {
 
     var errorStats = errorChecking(population);
     var threshold = errorStats.avError;
+    var veryHealthy = threshold / 2;
+    var superHealthy = threshold / 4;
+    var insanelyHealthy = threshold / 8;
     var newPopulation = [];
 
     for (var i = 0; i < population.length; i++) {
 
       var random = Math.floor(Math.random() * 100 + 1);
-
-      if (Math.abs(population[i].error) < threshold) {
+      if (Math.abs(population[i].error) < insanelyHealthy) {
+        newPopulation.push(population[i]);
+      }
+      if (Math.abs(population[i].error) < superHealthy) {
+        if (random > superHealthyThreshold) {
+          newPopulation.push(population[i]);
+        }
+      } else if (Math.abs(population[i].error) < veryHealthy) {
         if (random > fitThreshold) {
           newPopulation.push(population[i]);
-          console.log("Fit MLP added");
+          //console.log("Fit MLP added");
         }
-      } else {
-        if (random > unFitThreshold) {
-          newPopulation.push(population[i]);
-          console.log("UNFIT MLP added");
-        }
-      }
+      } else if (Math.abs(population[i].error) < threshold) {
+          if (random > averageThreshold) {
+            newPopulation.push(population[i]);
+            //console.log("Fit MLP added");
+          }
+        } else {
+            if (random > unFitThreshold) {
+              newPopulation.push(population[i]);
+              //console.log("UNFIT MLP added");
+            }
+          }
     }
-    console.log("1st Gen Size: " + population.length);
-    console.log("2nd Gen Size: " + newPopulation.length);
     return newPopulation;
   };
 
-  $scope.test = function (n) {
+  $scope.testMLP;
+  $scope.test1 = function () {
+    $scope.testMLP = createNewRandMLP(1);
+  };
 
-    $scope.newpop = initializePopulation(n);
+  $scope.test2 = function () {
+    var inp = Math.random();
+    checkMLP(inp, inp, 1, $scope.testMLP);
+  };
 
+  $scope.test = function (popSize, iterations) {
+
+    //$scope.newpop = initializePopulation(popSize);
+    /*
     $scope.secGen = fitnessFunction($scope.newpop);
-
-    var difference = n - $scope.secGen.length;
-
-    $scope.babies = crossOverWeights($scope.secGen, difference);
+    var difference = popSize - $scope.secGen.length
+    $scope.secGen = crossOverWeights($scope.secGen,difference);
+    for(var i=1;i<iterations;i++){
+        $scope.secGen = fitnessFunction($scope.secGen);
+        var difference = popSize - $scope.secGen.length
+        $scope.secGen = crossOverWeights($scope.secGen,difference);
+        console.log("Iteration: " + i)
+    }
+    //console.log("Errors over populations: "+ averageErrors);
+    var finalErrorStats = errorChecking($scope.secGen);
+    var bestMLP = finalErrorStats.minError[1];
+    $scope.disp = $scope.secGen[bestMLP];
+    console.log("Input: "+$scope.disp.inputLayer.x);
+    console.log("Output: "+$scope.disp.outputLayer.output);
+    checkMLP([-1],$scope.disp);*/
   };
 
-  /***************************************
-        What is bellow works.
-        However is basic and random.
-  ****************************************/
+  var checkMLP = function checkMLP(input, expected, sampleNumber, mlp) {
 
-  $scope.crossing = function () {
+    var aFunc = mlp.aFunc;
 
-    var population = initializePopulation(4);
-    crossOver(population);
+    //divide up the weights between the nodes.
+    var temp = [];
+    for (var i = 0; i < mlp.weights.length; i++) {
+      temp[i] = mlp.weights[i];
+    }
+    var inputWeights = temp.splice(0, 2);
+    var hiddenWeights = temp.splice(0, 5);
+    var outputWeights = temp.splice(0, 5);
+
+    //create the three layers.
+    var iLayer = singleInputLayer(input, inputWeights, aFunc);
+    console.log("Input in: " + input);
+    console.log("Input out: " + iLayer.output);
+    var hLayer = hiddenLayer(iLayer, hiddenWeights, aFunc);
+    var oLayer = outputLayer(hLayer, outputWeights, aFunc);
+
+    mlp.inputLayer = iLayer;
+    mlp.hiddenLayer = hLayer;
+    mlp.outputLayer = oLayer;
+    //error checking of the network.
+    var error = Math.pow(expected - oLayer.output, 2) / sampleNumber;
+
+    mlp.error = mlp.error + error;
+
+    /*  {
+      'weights': mlp.weights,
+      'aFunc': mlp.aFunc,
+      'inputLayer': mlp.iLayer,
+      'hiddenLayer': mlp.hLayer,
+      'outputLayer': mlp.oLayer,
+      'error': mlp.error
+    };*/
   };
+
+  /*************************************************
+      This funtion splits two parents into two parts
+      and creates one child from two of those parts.
+      Sometimes the two parents are the same
+      which means that the parent just clones itself.
+  **************************************************/
 
   var crossOverWeights = function crossOverWeights(population, difference) {
 
     var babies = [];
     var parents = [];
     var numParents = population.length;
+    //this means you have killed all your population
+    if (numParents == 0) {
+      parents = initializePopulation(difference);
+      console.log("You have set the fitnessFunction to be too harsh and you have had to create a new population");
+      console.log("Maybe try relaxing the parameters");
+
+      return parents;
+    }
+
+    var weightsSize = 12;
     //copy over parents
     for (var i = 0; i < numParents; i++) {
       parents[i] = population[i];
@@ -438,19 +526,53 @@ app.controller('myCtrl', function ($scope) {
     //whilst there is still space, randomly select two adults and splice
     for (var i = 0; i < difference; i++) {
 
-      var random1 = Math.floor(Math.random() * 100) % numParents;
-      var random1 = Math.floor(Math.random() * 100) % numParents;
-      console.log("R1: " + random1 + "R2: " + random2);
+      var ran1 = Math.floor(Math.random() * 100) % numParents;
+      var ran2 = Math.floor(Math.random() * 100) % numParents;
+      var ran3 = Math.floor(Math.random() * 100) % weightsSize;
+      var ran4 = Math.floor(Math.random() * 1000000) + 1;
       var temp1 = [];
       var temp2 = [];
+
+      for (var j = 0; j < weightsSize; j++) {
+        temp1[j] = parents[ran1].weights[j];
+        temp2[j] = parents[ran2].weights[j];
+      }
+      //added to a new list so that the babies don't become parents in the same generation
+      var babysWeights = [];
+      if (ran1 % 5 < 1) {
+        for (var k = 0; k < ran3; k++) {
+          babysWeights[k] = temp1[k];
+        }
+        for (var k = ran3; k < weightsSize; k++) {
+          babysWeights[k] = temp2[k];
+        }
+      } else {
+        for (var k = 0; k < weightsSize; k++) {
+          babysWeights[k] = temp1[k];
+          babysWeights[k + 1] = temp2[+1];
+        }
+      }
+
+      //this randomly mutates one of the weights based on the mutation rate.
+      if (ran4 < mutationRate) {
+        ran4 = ran4 % 12;
+        babysWeights[ran4] = Math.random();
+        console.log("Mutation Occured!");
+      }
+
+      babies.push(createNewMLP([Math.random()], babysWeights));
     }
+
+    //combine the two lists.
+    for (var s = 0; s < difference; s++) {
+      parents.push(babies[s]);
+    }
+    return parents;
   };
 
   /***************************************
-        These functions purge the lower
-        half of the population and then
-        create random children to replace
-        those that have been removed.
+        What is bellow works.
+        However is basic and random.
   ****************************************/
 
   $scope.runTheMLP = function (max) {
@@ -489,7 +611,7 @@ app.controller('myCtrl', function ($scope) {
   var procreate = function procreate(population, n) {
 
     for (var i = 0; i < n; i++) {
-      var temp = createNewRandMLP();
+      var temp = createNewRandMLP([Math.random()]);
       population.push(temp);
     }
 
