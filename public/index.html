@@ -1,16 +1,47 @@
 
 <html ng-app="myApp">
   <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
     <title>BIC CW2</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+    <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <link rel="stylesheet" href="/css/style.css">
-  </head>
-  <body ng-controller="myCtrl">
-    <div class="buttons">
-      <button ng-click="test1()">TEST1</button>
-      <button ng-click="test(100,100)">RUN!!</button>
-    </div><br/><br/><br/>
-    <p>{{disp}}</p>
+    
+    <body ng-controller="myCtrl"></body><br/>
+    <button ng-click="selectFunction(0)">linear</button>
+    <button ng-click="selectFunction(1)">cubic</button>
+    <button ng-click="selectFunction(2)">sine</button>
+    <button ng-click="selectFunction(3)">tanh</button><br/><br/>
+    <h>Crossover rate = {{crossOverRate}} %</h><br/>
+    <input type="number" ng-model="crossOverRate"/><br/><br/>
+    <h>Mutation rate = {{mutationRate}} %</h><br/>
+    <input type="number" ng-model="mutationRate"/><br/><br/>
+    <h>Initial Population Size = {{initialPopilationSize}}</h><br/>
+    <input type="number" ng-model="initialPopilationSize"/><br/><br/>
+    <h>Maximum Number of Iterations = {{maxIterations}}</h><br/>
+    <input type="number" ng-model="maxIterations"/><br/><br/>
+    <button ng-click="runWithBoth(initialPopilationSize,(maxIterations-1))">Evolve Both Weight and Activation Functions</button><br/><br/>
+    <button ng-click="runWithAFunc(initialPopilationSize,(maxIterations-1))">Evolve with Activation Function only</button><br/><br/>
+    <button ng-click="test(initialPopilationSize,(maxIterations-1))">Evolve with Weights only</button><br/><br/>
+    <h>The Best MLP</h>
+    <p>MSE: {{disp.error}}</p><br/>
+    <p>Inputs Weight: {{disp.inputLayer.w[0]}} ..... Activation: {{disp.inputLayer.activFunc[0]}}</p>
+    <p>Hidden</p>
+    <li ng-repeat="i in disp.hiddenLayer">Weight: {{i.w[0]}} ..... Activation: {{i.activFunc[0]}}</li><br/>
+    <p>Output Weight: {{disp.outputLayer.w[0]}} ..... Activation: {{disp.outputLayer.activFunc[0]}}</p><br/><br/>{{disp}}<br/><br/><br/>
+    <p>Run Time Data =</p>
+    <table>
+      <tr>
+        <th>desired:</th>
+        <th>actual</th>
+        <th>MSE</th>
+      </tr>
+      <tr ng-repeat=" i in runTimeGrahA">
+        <td>{{i[0]}}</td>
+        <td>{{i[1]}}</td>
+        <td>{{runTimeGrahB[$index]}}</td>
+      </tr>
+    </table><br/><br/>
+    <p>Run Time Graph B = {{runTimeGrahB}}</p><br/><br/>
     <script src="/js/bundle.js"></script>
-  </body>
+  </head>
 </html>
