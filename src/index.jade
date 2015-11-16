@@ -6,16 +6,12 @@ html(ng-app='myApp')
     // endinject
   body(ng-controller='myCtrl')
     .buttons
-
-      button(ng-click="test2()") TEST2
       button(ng-click="test1()") TEST1
-      button(ng-click="test(1,0)") RUN!!
+      button(ng-click="test(100,100)") RUN!!
     br
-    h 1
-    {{testMLP}}
     br
-    h 2
-    {{disp2}}
+    br
+    p {{disp}}
 
 
 

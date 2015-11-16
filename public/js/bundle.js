@@ -34,10 +34,8 @@ app.controller('myCtrl', function ($scope) {
    *     - Output Values
    *   + Error
   ****************************************/
-  $scope.input_1;
-  $scope.input_2;
-  $scope.outputTest;
-  $scope.hiddenNodes;
+
+  var linear_data = [[-1, -1], [-0.98, -0.98], [-0.96, -0.96], [-0.94, -0.94], [-0.92, -0.92], [-0.9, -0.9], [-0.88, -0.88], [-0.86, -0.86], [-0.84, -0.84], [-0.82, -0.82], [-0.8, -0.8], [-0.78, -0.78], [-0.76, -0.76], [-0.74, -0.74], [-0.72, -0.72], [-0.7, -0.7], [-0.68, -0.68], [-0.66, -0.66], [-0.64, -0.64], [-0.62, -0.62], [-0.6, -0.6], [-0.58, -0.58], [-0.56, -0.56], [-0.54, -0.54], [-0.52, -0.52], [-0.5, -0.5], [-0.48, -0.48], [-0.46, -0.46], [-0.44, -0.44], [-0.42, -0.42], [-0.4, -0.4], [-0.38, -0.38], [-0.36, -0.36], [-0.34, -0.34], [-0.32, -0.32], [-0.3, -0.3], [-0.28, -0.28], [-0.26, -0.26], [-0.24, -0.24], [-0.22, -0.22], [-0.2, -0.2], [-0.18, -0.18], [-0.16, -0.16], [-0.14, -0.14], [-0.12, -0.12], [-0.1, -0.1], [-0.08, -0.08], [-0.06, -0.06], [-0.04, -0.04], [-0.02, -0.02], [0, 0], [0.02, 0.02], [0.04, 0.04], [0.06, 0.06], [0.08, 0.08], [0.1, 0.1], [0.12, 0.12], [0.14, 0.14], [0.16, 0.16], [0.18, 0.18], [0.2, 0.2], [0.22, 0.22], [0.24, 0.24], [0.26, 0.26], [0.28, 0.28], [0.3, 0.3], [0.32, 0.32], [0.34, 0.34], [0.36, 0.36], [0.38, 0.38], [0.4, 0.4], [0.42, 0.42], [0.44, 0.44], [0.46, 0.46], [0.48, 0.48], [0.5, 0.5], [0.52, 0.52], [0.54, 0.54], [0.56, 0.56], [0.58, 0.58], [0.6, 0.6], [0.62, 0.62], [0.64, 0.64], [0.66, 0.66], [0.68, 0.68], [0.7, 0.7], [0.72, 0.72], [0.74, 0.74], [0.76, 0.76], [0.78, 0.78], [0.8, 0.8], [0.82, 0.82], [0.84, 0.84], [0.86, 0.86], [0.88, 0.88], [0.9, 0.9], [0.92, 0.92], [0.94, 0.94], [0.96, 0.96], [0.98, 0.98]];
 
   /************************
     Global Variables
@@ -52,7 +50,9 @@ app.controller('myCtrl', function ($scope) {
 
   var averageErrors = [];
 
-  var x_data = [1];
+  var test_Data = [[-1, -1], [-0.98, -0.98], [-0.96, -0.96], [-0.94, -0.94], [-0.92, -0.92], [-0.9, -0.9], [0.86, 0.86], [0.88, 0.88], [0.9, 0.9], [0.92, 0.92], [0.94, 0.94], [0.96, 0.96], [0.98, 0.98]];
+
+  var testCount = 1;
 
   /************************************************************
                       Activation Functions
@@ -90,7 +90,8 @@ app.controller('myCtrl', function ($scope) {
   var sigmoidTanh = function sigmoidTanh(input, constant) {
 
     var temp = Math.tanh(constant * input);
-    //console.log("Tanh Sigmoid: "+temp);
+    //console.log("Tanh Sigmoid i: "+temp);
+    //console.log("Tanh Sigmoid o: "+temp);
     return temp;
   };
 
@@ -138,17 +139,15 @@ app.controller('myCtrl', function ($scope) {
     //bias set to 0 for now.
     var bias = 0;
 
-    this.sum = 0;
+    this.sum = input[0];
     var tempSum = 0;
 
     for (var i = 0; i < this.x.length; i++) {
       tempSum = tempSum + this.w[i] * this.x[i];
-      console.log("Temp: " + tempSum);
     };
 
     tempSum = tempSum + bias;
     this.sum = tempSum;
-    console.log("SUM: " + this.sum);
 
     switch (activFunc[0]) {
       case 0:
@@ -243,8 +242,13 @@ app.controller('myCtrl', function ($scope) {
 
     var random0 = Math.floor(Math.random() * 10 / 2);
     aFunc.push(random0);
-    var random1 = Math.floor(Math.random() * 10 / 2);
-    aFunc.push(random1);
+    if (random0 == 3 || random0 == 0) {
+      var random1 = (0.5 - Math.random()) / 2;
+      aFunc.push(random1);
+    } else {
+      var random1 = Math.floor(Math.random() * 10 / 2);
+      aFunc.push(random1);
+    }
     if (random0 == 3) {
       var random2 = 0 - Math.random();
       aFunc.push(random2);
@@ -339,7 +343,7 @@ app.controller('myCtrl', function ($scope) {
 
     var population = [];
     for (var i = 0; i < size; i++) {
-      var temp = createNewRandMLP([Math.random()]);
+      var temp = createNewRandMLP([1]);
       population.push(temp);
     }
 
@@ -428,34 +432,52 @@ app.controller('myCtrl', function ($scope) {
 
   $scope.testMLP;
   $scope.test1 = function () {
-    $scope.testMLP = createNewRandMLP(1);
+    $scope.testMLP = initializePopulation(50);
+    samplePopulation(linear_data, $scope.testMLP);
   };
 
-  $scope.test2 = function () {
-    var inp = Math.random();
-    checkMLP(inp, inp, 1, $scope.testMLP);
+  var samplePopulation = function samplePopulation(data, population) {
+    var size = population.length;
+    console.log("Size: " + size);
+
+    for (var i = 0; i < size; i++) {
+      for (var d = 0; d < data.length; d++) {
+        checkMLP([data[d][0]], data[d][1], d, population[i]);
+      }
+      var totalErr = population[i].error;
+      var mse = totalErr / data.length;
+      population[i].error = mse;
+      console.log("MSE: " + mse);
+    }
   };
 
   $scope.test = function (popSize, iterations) {
 
-    //$scope.newpop = initializePopulation(popSize);
-    /*
-    $scope.secGen = fitnessFunction($scope.newpop);
-    var difference = popSize - $scope.secGen.length
-    $scope.secGen = crossOverWeights($scope.secGen,difference);
-    for(var i=1;i<iterations;i++){
-        $scope.secGen = fitnessFunction($scope.secGen);
-        var difference = popSize - $scope.secGen.length
-        $scope.secGen = crossOverWeights($scope.secGen,difference);
-        console.log("Iteration: " + i)
+    var newpop = initializePopulation(popSize);
+    samplePopulation(linear_data, newpop);
+
+    $scope.secGen = fitnessFunction(newpop);
+
+    var difference = popSize - $scope.secGen.length;
+    $scope.secGen = crossOverWeights($scope.secGen, difference);
+
+    samplePopulation(linear_data, $scope.secGen);
+
+    for (var i = 1; i < iterations; i++) {
+      $scope.secGen = fitnessFunction($scope.secGen);
+      var difference = popSize - $scope.secGen.length;
+      $scope.secGen = crossOverWeights($scope.secGen, difference);
+      samplePopulation(linear_data, $scope.secGen);
+      console.log("Iteration: " + i);
     }
     //console.log("Errors over populations: "+ averageErrors);
+
     var finalErrorStats = errorChecking($scope.secGen);
     var bestMLP = finalErrorStats.minError[1];
     $scope.disp = $scope.secGen[bestMLP];
-    console.log("Input: "+$scope.disp.inputLayer.x);
-    console.log("Output: "+$scope.disp.outputLayer.output);
-    checkMLP([-1],$scope.disp);*/
+    checkMLP(0, 0, 1, $scope.disp);
+    console.log($scope.disp.inputLayer.x);
+    console.log($scope.disp.outputLayer.output);
   };
 
   var checkMLP = function checkMLP(input, expected, sampleNumber, mlp) {
@@ -473,8 +495,6 @@ app.controller('myCtrl', function ($scope) {
 
     //create the three layers.
     var iLayer = singleInputLayer(input, inputWeights, aFunc);
-    console.log("Input in: " + input);
-    console.log("Input out: " + iLayer.output);
     var hLayer = hiddenLayer(iLayer, hiddenWeights, aFunc);
     var oLayer = outputLayer(hLayer, outputWeights, aFunc);
 
@@ -482,7 +502,8 @@ app.controller('myCtrl', function ($scope) {
     mlp.hiddenLayer = hLayer;
     mlp.outputLayer = oLayer;
     //error checking of the network.
-    var error = Math.pow(expected - oLayer.output, 2) / sampleNumber;
+    var differenceInPuts = expected - oLayer.output;
+    var error = differenceInPuts * differenceInPuts;
 
     mlp.error = mlp.error + error;
 
