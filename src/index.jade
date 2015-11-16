@@ -1,0 +1,101 @@
+html(ng-app='myApp')
+  head
+
+    title BIC CW2
+    script(src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js")
+    script(src="//d3js.org/d3.v3.min.js" charset="utf-8")
+    // inject:css
+    // endinject
+
+
+    body(ng-controller='myCtrl')
+    button(ng-click="initializePopulationdbl(3)") test
+    br
+    br
+    p {{dblI}}
+    br
+    br
+    br
+    br
+    button(ng-click="selectFunction(0)") linear
+
+    button(ng-click="selectFunction(1)") cubic
+
+    button(ng-click="selectFunction(2)") sine
+
+    button(ng-click="selectFunction(3)") tanh
+
+    button(ng-click="selectFunction(4)") xor
+
+    button(ng-click="selectFunction(5)") complex
+    br
+    br
+    h Crossover rate = {{crossOverRate}} %
+    br
+    input(type="number" ng-model="crossOverRate")
+    br
+    br
+    h Mutation rate = {{mutationRate}} %
+    br
+    input(type="number" ng-model="mutationRate")
+    br
+    br
+    h Initial Population Size = {{initialPopilationSize}}
+    br
+    input(type="number" ng-model="initialPopilationSize")
+    br
+    br
+    h Maximum Number of Iterations = {{maxIterations}}
+    br
+    input(type="number" ng-model="maxIterations")
+    br
+    br
+    button(ng-click="runWithBoth(initialPopilationSize,(maxIterations-1))") Evolve Both Weight and Activation Functions
+    br
+    br
+    button(ng-click="runWithAFunc(initialPopilationSize,(maxIterations-1))") Evolve with Activation Function only
+    br
+    br
+    button(ng-click="runWithWeights(initialPopilationSize,(maxIterations-1))") Evolve with Weights only
+    br
+    br
+    h The Best MLP
+    p MSE: {{disp.error}}
+    br
+    p Inputs Weight: {{disp.inputLayer.w[0]}} ..... Activation: {{disp.inputLayer.activFunc[0]}}
+    p Hidden
+    li(ng-repeat="i in disp.hiddenLayer") Weight: {{i.w[0]}} ..... Activation: {{i.activFunc[0]}}
+    br
+    p Output Weight: {{disp.outputLayer.w[0]}} ..... Activation: {{disp.outputLayer.activFunc[0]}}
+    br
+    br
+    {{disp}}
+    br
+    br
+    br
+    p Run Time Data =
+    table
+      tr
+        th desired:
+        th actual
+        th MSE
+      tr(ng-repeat=" i in runTimeGrahA")
+        td {{i[0]}}
+        td{{i[1]}}
+        td{{runTimeGrahB[$index]}}
+    br
+    br
+    p Run Time Graph B = {{runTimeGrahB}}
+    br
+    br
+
+
+
+
+
+
+
+
+
+    // inject:js
+    // endinject
